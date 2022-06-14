@@ -1,20 +1,23 @@
+import axios from "axios"
 import { useEffect, useState } from "react"
 import CompleteData from "./CompleteData"
+import { useParams } from 'react-router-dom'
 
-const SearchResults = ({ data, search }) => {
+const SearchResults = () => {
     const [resultData, setResultData] = useState([])
-    console.log(data)
+    const { search } = useParams()
+
+    const fetchData = async () => {
+        const result = await axios.get(`https://searchapi-v1.herokuapp.com/api/v1/find/${search.toUpperCase()}`)
+        setResultData(result.data)
+    }
 
     useEffect(() => {
-        const regex = new RegExp(`\\b${search.toUpperCase()}\\b`)
-        const customData = data.filter((bank) => regex.test(bank.bank_name))
-        setResultData(customData)
+        fetchData()
     }, [search])
 
     return (
-        <>
-            <CompleteData data={resultData} />
-        </>
+        <CompleteData data={resultData} />
     )
 }
 
